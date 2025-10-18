@@ -266,7 +266,7 @@
         </div>
     </div>
 
-    <script>
+    <!--<script>
         const chatbotToggleBtn = document.getElementById('chatbot-toggle-btn');
         const chatbotContainer = document.getElementById('chatbot-container');
         const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
@@ -341,6 +341,109 @@
             }
         }
     </script>
+-->
+
+    <script>
+const chatbotToggleBtn = document.getElementById('chatbot-toggle-btn');
+const chatbotContainer = document.getElementById('chatbot-container');
+const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
+const chatbotMessages = document.getElementById('chatbot-messages');
+const chatbotInput = document.getElementById('chatbot-input');
+const chatbotSendBtn = document.getElementById('chatbot-send-btn');
+
+// Toggle chatbot visibility
+chatbotToggleBtn.addEventListener('click', () => {
+    chatbotContainer.style.display = 'flex';
+    chatbotToggleBtn.style.display = 'none';
+});
+
+chatbotCloseBtn.addEventListener('click', () => {
+    chatbotContainer.style.display = 'none';
+    chatbotToggleBtn.style.display = 'flex';
+});
+
+// Initialize Speech Recognition
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+recognition.lang = "en-US";
+
+// Function to speak bot response
+function speakBot(message) {
+    const speech = new SpeechSynthesisUtterance(message);
+    speech.lang = "en-US";
+    window.speechSynthesis.speak(speech);
+}
+
+// Simulate bot response (replace this with AI API if you want)
+function generateBotResponse(userMessage) {
+    const lowerCaseMessage = userMessage.toLowerCase();
+    if (lowerCaseMessage.includes('hello') || lowerCaseMessage.includes('hi')) {
+        return "Hello! How can I assist your English learning today?";
+    } else if (lowerCaseMessage.includes('grammar')) {
+        return "What specific grammar topic are you struggling with? I can help explain tenses, articles, prepositions, and more!";
+    } else if (lowerCaseMessage.includes('vocabulary')) {
+        return "Great! Tell me a word you want to learn, or ask me for synonyms or antonyms.";
+    } else if (lowerCaseMessage.includes('speak') || lowerCaseMessage.includes('pronunciation')) {
+        return "Improving speaking is crucial! Do you want tips on pronunciation, intonation, or conversation practice?";
+    } else if (lowerCaseMessage.includes('tenses')) {
+        return "English tenses can be tricky! Which tense would you like to review: Present, Past, or Future?";
+    } else if (lowerCaseMessage.includes('thank you') || lowerCaseMessage.includes('thanks')) {
+        return "You're welcome! Feel free to ask if you need more help.";
+    } else if (lowerCaseMessage.includes('how are you')) {
+        return "I'm a bot, so I don't have feelings, but I'm ready to help you learn English!";
+    } else {
+        return "I'm here to help you learn English! Can you ask me a question about grammar, vocabulary, pronunciation, or anything else?";
+    }
+}
+
+// Function to handle sending user message
+function handleUserMessage(message) {
+    if (!message) return;
+
+    // Add user message to chat
+    const userMsgDiv = document.createElement('div');
+    userMsgDiv.classList.add('message', 'user');
+    userMsgDiv.textContent = message;
+    chatbotMessages.appendChild(userMsgDiv);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+    // Get bot response
+    const botResponse = generateBotResponse(message);
+    const botMsgDiv = document.createElement('div');
+    botMsgDiv.classList.add('message', 'bot');
+    botMsgDiv.textContent = botResponse;
+    chatbotMessages.appendChild(botMsgDiv);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+    // Speak the bot response
+    speakBot(botResponse);
+}
+
+// Send text message
+chatbotSendBtn.addEventListener('click', () => {
+    const message = chatbotInput.value.trim();
+    chatbotInput.value = '';
+    handleUserMessage(message);
+});
+
+chatbotInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        const message = chatbotInput.value.trim();
+        chatbotInput.value = '';
+        handleUserMessage(message);
+    }
+});
+
+// Voice input
+chatbotToggleBtn.addEventListener('click', () => {
+    recognition.start();
+});
+
+recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    handleUserMessage(transcript);
+};
+</script>
 
 </body>
 </html>
